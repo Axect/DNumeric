@@ -454,6 +454,25 @@ struct Matrix {
   // ===========================================================================
   // Matrix Utils
   // ===========================================================================
+  /++
+    True -> False
+  +/
+  Matrix makeWrong() {
+    assert(this.byRow);
+    double[] v_ref = this.val.comp; // Double array
+    auto r = this.row;
+    auto c = this.col;
+    auto l = r * c - 1;
+    v_con.length = l + 1;
+
+    foreach(i; 0 .. l) {
+      auto s = (i * c) % l;
+      v_con[i] = v_ref[s];
+    }
+    v_con[l] = v_ref[l];
+
+    return Matrix(v_con, r, c);
+  }
 
   /++
     Transpose
@@ -596,6 +615,18 @@ struct Matrix {
     return target;
   }
 }
+
+// =============================================================================
+// Functions of vector or matrices
+// =============================================================================
+Matrix cbind(Matrix m, Matrix n) {
+  assert(m.row == n.row);
+  Matrix container;
+  container.row = m.row;
+  container.col = m.col + n.col;
+}
+
+
 
 // =============================================================================
 // Array of Array Utils
