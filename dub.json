@@ -1,0 +1,9 @@
+{
+	"name": "dnumeric",
+	"authors": [
+		"Tae Geun Kim"
+	],
+	"description": "D language Numerical Computation Library",
+	"copyright": "Copyright © 2018, Tae Geun Kim",
+	"license": "proprietary"
+}
