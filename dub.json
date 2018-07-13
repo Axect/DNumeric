@@ -3,7 +3,7 @@
 	"authors": [
 		"Tae Geun Kim"
 	],
-	"description": "D language Numerical Computation Library",
+	"description": "D Numeric Library with R syntax",
 	"copyright": "Copyright © 2018, Tae Geun Kim",
-	"license": "proprietary"
+	"license": "BSD 3-clause"
 }
