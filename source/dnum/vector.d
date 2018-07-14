@@ -127,7 +127,7 @@ struct Vector {
   /++
     Getter
   +/
-  double opIndex(size_t i) const {
+  pure double opIndex(size_t i) const {
     return this.comp[i];
   }
 
