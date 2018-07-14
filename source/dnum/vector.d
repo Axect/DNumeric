@@ -1,6 +1,4 @@
-module data.vector;
-
-import std.stdio : writeln;
+module dnum.vector;
 
 /++
   Vector is default class for Statistics
@@ -213,39 +211,39 @@ struct Vector {
   // ===========================================================================
   // Statistics Operator
   // ===========================================================================
-  pure double sum() const {
-    double s = 0;
-    foreach(e; this.comp) {
-      s += e;
-    }
-    return s;
-  }
+  // pure double sum() const {
+  //   double s = 0;
+  //   foreach(e; this.comp) {
+  //     s += e;
+  //   }
+  //   return s;
+  // }
   
-  pure double mean() const {
-    double s = 0;
-    double l = 0;
-    foreach(e; this.comp) {
-      l++;
-      s += e;
-    }
-    return s / l;
-  }
+  // pure double mean() const {
+  //   double s = 0;
+  //   double l = 0;
+  //   foreach(e; this.comp) {
+  //     l++;
+  //     s += e;
+  //   }
+  //   return s / l;
+  // }
 
-  pure double var() const {
-    double m = 0;
-    double l = 0;
-    double v = 0;
-    foreach(e; this.comp) {
-      l++;
-      m += e;
-      v += e ^^ 2;
-    }
-    return (v / l - (m / l)^^2) * l / (l - 1);
-  }
+  // pure double var() const {
+  //   double m = 0;
+  //   double l = 0;
+  //   double v = 0;
+  //   foreach(e; this.comp) {
+  //     l++;
+  //     m += e;
+  //     v += e ^^ 2;
+  //   }
+  //   return (v / l - (m / l)^^2) * l / (l - 1);
+  // }
 
-  pure double std() const {
-    return sqrt(var);
-  }
+  // pure double std() const {
+  //   return sqrt(var);
+  // }
 }
 
 // =============================================================================
