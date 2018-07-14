@@ -638,7 +638,7 @@ Matrix rbind(Vector m, Vector n) {
   assert(m.length == n.length);
   Vector v = cbind(m, n);
 
-  return Matrix(v, num, m.length, true);
+  return Matrix(v, 2, m.length, true);
 }
 
 /++
