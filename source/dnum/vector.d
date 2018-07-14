@@ -643,6 +643,9 @@ Matrix rbind(Vector m, Vector n, int num = 2) {
   return Matrix(v, num, m.length, true);
 }
 
+/++
+  Concate two Matrix to Matrix with col direction
++/
 Matrix cbind(Matrix m, Matrix n) {
   assert(m.row == n.row);
   Matrix container;
@@ -663,6 +666,18 @@ Matrix cbind(Matrix m, Matrix n) {
   return container;
 }
 
+/++
+  Concate to Matrix to Matrix with row direction
++/
+Matrix rbind(Matrix m, Matrix n) {
+  assert(m.col == n.col);  
+  
+  import std.array : join;
+
+  auto mat = join([m.data, n.data]);
+
+  return Matrix(mat);
+}
 
 
 // =============================================================================
