@@ -636,11 +636,21 @@ Vector cbind(Vector m, Vector n) {
 /++
   Concate two Vectors to Matrix
 +/
-Matrix rbind(Vector m, Vector n, int num = 2) {
+Matrix rbind(Vector m, Vector n) {
   assert(m.length == n.length);
   Vector v = cbind(m, n);
 
   return Matrix(v, num, m.length, true);
+}
+
+/++
+  Insert Vector to Matrix
++/
+Matrix rbind(Matrix m, Vector v) {
+  assert(m.col == v.length);
+  Matrix n = Matrix(v, 1, v.length, true);
+
+  return rbind(m, n);
 }
 
 /++
