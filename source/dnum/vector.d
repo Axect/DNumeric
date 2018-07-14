@@ -621,13 +621,26 @@ struct Matrix {
 // =============================================================================
 // Functions of vector or matrices
 // =============================================================================
+/++
+  Concate two Vectors to Vector
++/
 Vector cbind(Vector m, Vector n) {
   import std.array : join;
-  
+
   Vector container;
 
   container.comp = join([m.comp, n.comp]);
   return container;
+}
+
+/++
+  Concate two Vectors to Matrix
++/
+Matrix rbind(Vector m, Vector n, int num = 2) {
+  assert(m.length == n.length);
+  Vector v = cbind(m, n);
+
+  return Matrix(v, num, m.length, true);
 }
 
 Matrix cbind(Matrix m, Matrix n) {
