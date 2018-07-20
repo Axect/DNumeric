@@ -447,7 +447,7 @@ struct Matrix {
 
         auto target = initMat(l1, l2);
 
-        foreach(i, ref rows; taskPool.parallel(target)) {
+        foreach(i, ref rows; target) {
           foreach(j; 0 .. l2) {
             double s = 0;
             foreach(k; 0 .. this.col) {
