@@ -362,7 +362,7 @@ struct Matrix {
     Binary Operator with Matrix
   +/
   Matrix opBinary(string op)(Matrix rhs) {
-    Matrix temp = Matrix(this.val, this.row, this.col, this.byRow); // Guess heavy cost but..
+    Matrix temp = Matrix(this.val.comp[], this.row, this.col, this.byRow); // Guess heavy cost but..
     switch(op) {
       case "+":
         foreach(i; 0 .. temp.val.length) {
