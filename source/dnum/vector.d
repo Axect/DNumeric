@@ -23,13 +23,6 @@ struct Vector {
   }
 
   /++
-    Uninitialized
-  +/
-  this(long l) {
-    this.comp.length = l;
-  }
-
-  /++
     array to Vector
   +/
   this(double[] vec) {
@@ -217,43 +210,6 @@ struct Vector {
     }
     return s;
   }
-
-  // ===========================================================================
-  // Statistics Operator
-  // ===========================================================================
-  // pure double sum() const {
-  //   double s = 0;
-  //   foreach(e; this.comp) {
-  //     s += e;
-  //   }
-  //   return s;
-  // }
-  
-  // pure double mean() const {
-  //   double s = 0;
-  //   double l = 0;
-  //   foreach(e; this.comp) {
-  //     l++;
-  //     s += e;
-  //   }
-  //   return s / l;
-  // }
-
-  // pure double var() const {
-  //   double m = 0;
-  //   double l = 0;
-  //   double v = 0;
-  //   foreach(e; this.comp) {
-  //     l++;
-  //     m += e;
-  //     v += e ^^ 2;
-  //   }
-  //   return (v / l - (m / l)^^2) * l / (l - 1);
-  // }
-
-  // pure double std() const {
-  //   return sqrt(var);
-  // }
 }
 
 // =============================================================================
@@ -281,17 +237,6 @@ struct Matrix {
     this.col = c;
     this.byRow = byrow;
     this.data = this.matForm; // heavy cost
-  }
-
-  /++
-    Uninitialized Matrix
-  +/
-  this(long r, long c, bool byrow = false) {
-    this.val = Vector(r*c);
-    this.row = r;
-    this.col = c;
-    this.byRow = byrow;
-    this.data = this.matForm;
   }
 
   this(Vector vec, long r, long c, bool byrow = false) {
