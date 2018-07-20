@@ -238,7 +238,7 @@ struct Vector {
 +/
 struct Matrix {
   import std.array : join;
-  import std.parallelism : taskPool, parallel; // Perfect Parallel!
+  // import std.parallelism : taskPool, parallel; // Perfect Parallel!
 
   Vector val;
   long row;
@@ -493,13 +493,13 @@ struct Matrix {
   /++
     Transpose
   +/
-  Matrix transpose() const { // Parallel
+  Matrix transpose() const { // Serial
     auto l1 = this.row;
     auto l2 = this.col;
     auto m = this.data;
     Matrix temp;
     auto target = initMat(l2, l1);
-    foreach(i, ref rows; taskPool.parallel(target)) {
+    foreach(i, ref rows; target) {
       foreach(j; 0 .. l1) {
         rows[j] = m[j][i];
       }
@@ -507,6 +507,21 @@ struct Matrix {
     temp = Matrix(target);
     return temp;
   }
+
+  // Matrix transpose() const { // Parallel
+  //   auto l1 = this.row;
+  //   auto l2 = this.col;
+  //   auto m = this.data;
+  //   Matrix temp;
+  //   auto target = initMat(l2, l1);
+  //   foreach(i, ref rows; taskPool.parallel(target)) {
+  //     foreach(j; 0 .. l1) {
+  //       rows[j] = m[j][i];
+  //     }
+  //   }
+  //   temp = Matrix(target);
+  //   return temp;
+  // }
 
   /++
     Check Square Matrix
