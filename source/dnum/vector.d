@@ -359,35 +359,35 @@ struct Matrix {
     
     switch(op) {
       case "+":
-        foreach(i, ref rows; taskPool.parallel(temp)) {
+        foreach(i, ref rows; temp) {
           foreach(j; 0 .. c) {
             rows[j] = this.data[i][j] + rhs;
           }
         }
         break;
       case "-":
-        foreach(i, ref rows; taskPool.parallel(temp)) {
+        foreach(i, ref rows; temp) {
           foreach(j; 0 .. c) {
             rows[j] = this.data[i][j] - rhs;
           }
         }
         break;
       case "*":
-        foreach(i, ref rows; taskPool.parallel(temp)) {
+        foreach(i, ref rows; temp) {
           foreach(j; 0 .. c) {
             rows[j] = this.data[i][j] * rhs;
           }
         }
         break;
       case "/":
-        foreach(i, ref rows; taskPool.parallel(temp)) {
+        foreach(i, ref rows; temp) {
           foreach(j; 0 .. c) {
             rows[j] = this.data[i][j] / rhs;
           }
         }
         break;
       case "^^":
-        foreach(i, ref rows; taskPool.parallel(temp)) {
+        foreach(i, ref rows; temp) {
           foreach(j; 0 .. c) {
             rows[j] = this.data[i][j] ^^ rhs;
           }
@@ -410,28 +410,28 @@ struct Matrix {
 
     switch(op) {
       case "+":
-        foreach(i, ref rows; taskPool.parallel(temp)) {
+        foreach(i, ref rows; temp) {
           foreach(j; 0 .. c) {
             rows[j] = this.data[i][j] + rhs.data[i][j];
           }
         }
         break;
       case "-":
-        foreach(i, ref rows; taskPool.parallel(temp)) {
+        foreach(i, ref rows; temp) {
           foreach(j; 0 .. c) {
             rows[j] = this.data[i][j] - rhs.data[i][j];
           }
         }
         break;
       case "*":
-        foreach(i, ref rows; taskPool.parallel(temp)) {
+        foreach(i, ref rows; temp) {
           foreach(j; 0 .. c) {
             rows[j] = this.data[i][j] * rhs.data[i][j];
           }
         }
         break;
       case "/":
-        foreach(i, ref rows; taskPool.parallel(temp)) {
+        foreach(i, ref rows; temp) {
           foreach(j; 0 .. c) {
             rows[j] = this.data[i][j] / rhs.data[i][j];
           }
