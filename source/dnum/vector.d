@@ -495,7 +495,7 @@ struct Matrix {
   /++
     Transpose
   +/
-  Matrix transpose() { // Parallel
+  Matrix transpose() const { // Parallel
     auto l1 = this.row;
     auto l2 = this.col;
     auto m = this.data;
@@ -513,7 +513,7 @@ struct Matrix {
   /++
     Check Square Matrix
   +/
-  bool isSquare() {
+  bool isSquare() const {
     return this.row == this.col;
   }
 
@@ -522,14 +522,14 @@ struct Matrix {
   /++
     LU Decomposition
   +/
-  auto lu() {
+  auto lu() const {
     auto n = this.row;
     assert(this.isSquare);
 
-    double[][] m = this.data;
+    const double[][] m = this.data;
     double[][] u = zerosMat(n,n);
     double[][] l = eyeMat(n);
-    u[0] = m[0];
+    u[0][] = m[0][];
 
     foreach(i; 0 .. n) {
       foreach(k; i .. n) {
@@ -556,7 +556,7 @@ struct Matrix {
   /++
     Determinant (Using LU Decomposition)
   +/
-  double det() { // Use LU Decomposition
+  double det() const { // Use LU Decomposition
     auto res = this.lu;
     Matrix U = res[1];
     
@@ -571,7 +571,7 @@ struct Matrix {
   /++
     Inverse
   +/
-  Matrix inv() {
+  Matrix inv() const {
     auto res = this.lu();
     Matrix L = res[0];
     Matrix U = res[1];
