@@ -145,59 +145,77 @@ struct Vector {
     Binary Operator with Scalar
   +/
   Vector opBinary(string op)(double rhs) {
-    Vector temp = Vector(this.comp);
+    double[] temp;
+    auto l = this.comp.length;
+    temp.length = l;
+    temp[] = 0;
+
     switch(op) {
       case "+":
-        temp.add_void(rhs);
+        foreach(i; 0 .. l) {
+          temp[i] = this.comp[i] + rhs;
+        }
         break;
       case "-":
-        temp.sub_void(rhs);
+        foreach(i; 0 .. l) {
+          temp[i] = this.comp[i] - rhs;
+        }
         break;
       case "*":
-        temp.mul_void(rhs);
+        foreach(i; 0 .. l) {
+          temp[i] = this.comp[i] * rhs;
+        }
         break;
       case "/":
-        temp.div_void(rhs);
+        foreach(i; 0 .. l) {
+          temp[i] = this.comp[i] / rhs;
+        }
         break;
       case "^^":
-        temp.pow_void(rhs);
+        foreach(i; 0 .. l) {
+          temp[i] = this.comp[i] ^^ rhs;
+        }
         break;
       default:
         break;
     }
-    return temp;
+    return Vector(temp);
   }
 
   /++
     Binary Operator with Vector
   +/
   Vector opBinary(string op)(Vector rhs) {
-    Vector temp = Vector(this.comp);
+    double[] temp;
+    auto l = this.comp.length;
+    temp.length = l;
+    temp[] = 0;
+
     switch(op) {
       case "+":
-        foreach(i; 0 .. temp.length) {
-          temp.comp[i] += rhs.comp[i];
+        foreach(i; 0 .. l) {
+          temp[i] = this.comp[i] + rhs.comp[i];
         }
         break;
       case "-":
-        foreach(i; 0 .. temp.length) {
-          temp.comp[i] -= rhs.comp[i];
+        foreach(i; 0 .. l) {
+          temp[i] = this.comp[i] - rhs.comp[i];
         }
         break;
       case "*":
-        foreach(i; 0 .. temp.length) {
-          temp.comp[i] *= rhs.comp[i];
+        foreach(i; 0 .. l) {
+          temp[i] = this.comp[i] * rhs.comp[i];
         }
         break;
       case "/":
-        foreach(i; 0 .. temp.length) {
-          temp.comp[i] /= rhs.comp[i];
+        foreach(i; 0 .. l) {
+          temp[i] = this.comp[i] / rhs.comp[i];
         }
         break;
       default:
         break;
     }
-    return temp;
+    return Vector(temp);
   }
 
   /++
@@ -334,54 +352,89 @@ struct Matrix {
     Binary Operator with Scalar
   +/
   Matrix opBinary(string op)(double rhs) {
-    Matrix temp = Matrix(this.data); // No Cost
+    auto r = this.row;
+    auto c = this.col;
+    
+    double[][] temp = zerosMat(r, c);
+    
     switch(op) {
       case "+":
-        temp.val.add_void(rhs);
+        foreach(i, ref rows; taskPool.parallel(temp)) {
+          foreach(j; 0 .. c) {
+            rows[j] = this.data[i][j] + rhs;
+          }
+        }
         break;
       case "-":
-        temp.val.sub_void(rhs);
+        foreach(i, ref rows; taskPool.parallel(temp)) {
+          foreach(j; 0 .. c) {
+            rows[j] = this.data[i][j] - rhs;
+          }
+        }
         break;
       case "*":
-        temp.val.mul_void(rhs);
+        foreach(i, ref rows; taskPool.parallel(temp)) {
+          foreach(j; 0 .. c) {
+            rows[j] = this.data[i][j] * rhs;
+          }
+        }
         break;
       case "/":
-        temp.val.div_void(rhs);
+        foreach(i, ref rows; taskPool.parallel(temp)) {
+          foreach(j; 0 .. c) {
+            rows[j] = this.data[i][j] / rhs;
+          }
+        }
         break;
       case "^^":
-        temp.val.pow_void(rhs);
+        foreach(i, ref rows; taskPool.parallel(temp)) {
+          foreach(j; 0 .. c) {
+            rows[j] = this.data[i][j] ^^ rhs;
+          }
+        }
         break;
       default:
         break;
     }
-    temp.refresh;
-    return temp;
+    return Matrix(temp);
   }
 
   /++
     Binary Operator with Matrix
   +/
   Matrix opBinary(string op)(Matrix rhs) {
-    Matrix temp = Matrix(this.val.comp[], this.row, this.col, this.byRow); // Guess heavy cost but..
+    auto r = this.row;
+    auto c = this.col;
+    
+    double[][] temp = zerosMat(r, c);
+
     switch(op) {
       case "+":
-        foreach(i; 0 .. temp.val.length) {
-          temp.val.comp[i] += rhs.val.comp[i];
+        foreach(i, ref rows; taskPool.parallel(temp)) {
+          foreach(j; 0 .. c) {
+            rows[j] = this.data[i][j] + rhs.data[i][j];
+          }
         }
         break;
       case "-":
-        foreach(i; 0 .. temp.val.length) {
-          temp.val.comp[i] -= rhs.val.comp[i];
+        foreach(i, ref rows; taskPool.parallel(temp)) {
+          foreach(j; 0 .. c) {
+            rows[j] = this.data[i][j] - rhs.data[i][j];
+          }
         }
         break;
       case "*":
-        foreach(i; 0 .. temp.val.length) {
-          temp.val.comp[i] *= rhs.val.comp[i];
+        foreach(i, ref rows; taskPool.parallel(temp)) {
+          foreach(j; 0 .. c) {
+            rows[j] = this.data[i][j] * rhs.data[i][j];
+          }
         }
         break;
       case "/":
-        foreach(i; 0 .. temp.val.length) {
-          temp.val.comp[i] /= rhs.val.comp[i];
+        foreach(i, ref rows; taskPool.parallel(temp)) {
+          foreach(j; 0 .. c) {
+            rows[j] = this.data[i][j] / rhs.data[i][j];
+          }
         }
         break;
       case "%": // Parallel Multiplication
@@ -403,13 +456,13 @@ struct Matrix {
             rows[j] = s;
           }
         }
-        temp = Matrix(target);
+        temp = target;
         break;
       default:
         break;
     }
-    temp.refresh;
-    return temp;
+
+    return Matrix(temp);
   }
 
   // ===========================================================================
