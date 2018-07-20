@@ -571,13 +571,16 @@ struct Matrix {
   /++
     Inverse
   +/
-  // Matrix inv() {
-  //   auto res = this.lu();
-  //   Matrix L = res[0];
-  //   Matrix U = res[1];
+  Matrix inv() {
+    auto res = this.lu();
+    Matrix L = res[0];
+    Matrix U = res[1];
 
+    Matrix Uinv = U.invU;
+    Matrix Linv = L.invL;
 
-  // }
+    return Uinv % Linv; 
+  }
 
   Matrix invL() {
     if (this.row == 1) {
