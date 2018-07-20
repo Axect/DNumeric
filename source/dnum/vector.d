@@ -601,6 +601,38 @@ struct Matrix {
     }
   }
 
+  Matrix invU() {
+    if (this.row == 1) {
+      auto m = this.data;
+      m[0][0] = 1 / this.data[0][0];
+      return Matrix(m);
+    } else if (this.row == 2) {
+      auto m = this.data;
+      auto a = m[0][0];
+      auto b = m[0][1];
+      auto c = m[1][1];
+      auto d = a * c;
+
+      m[0][0] = 1 / a;
+      m[0][1] = - b / d;
+      m[1][1] = 1 / c;
+
+      return Matrix(m);
+    } else {
+      auto u1 = this.block(1);
+      auto u2 = this.block(2);
+      auto u3 = this.block(3);
+      auto u4 = this.block(4);
+
+      auto m1 = u1.invU;
+      auto m3 = u3;
+      auto m4 = u4.invU;
+      auto m2 = (m1 % u2 % m4) * (-1);
+
+      return combine(m1, m2, m3, m4);
+    }
+  }
+
   /++
     Partitioning matrix
   +/
