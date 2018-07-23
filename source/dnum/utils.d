@@ -1,20 +1,30 @@
 module dnum.utils;
 
-import dnum.vector;
+import dnum.tensor;
 
-// =============================================================================
-// Vectorize
-// =============================================================================
 /++
-  Vectorize - Like R Function
+    Column Bind (Like R Syntax)
 +/
-Vector delegate(Vector) Vectorize(double delegate(double) f) {
-  return (v => v.fmap(f));
+Tensor cbind(Tensor t1, Tensor t2) {
+    auto container = Tensor(t1.nrow, t1.ncol + t2.ncol);
+
+    foreach(i, ref rows; container.data) {
+        rows = t1.data[i][] ~ t2.data[i][];
+    }
+
+    return container;
 }
 
 /++
-  VectorizeM - function to Matrix function
+    Row Bind (Like R Syntax)
 +/
-Matrix delegate(Matrix) VectorizeM(double delegate(double) f) {
-  return (v => Matrix(v.val.fmap(f), v.row, v.col, v.byRow));
+Tensor rbind(Tensor t1, Tensor t2) {
+    return Tensor(t1.data ~ t2.data);
+}
+
+/++
+  Vectorize Function
++/
+auto vectorize(double delegate(double) f) {
+    return (Tensor t) => t.fmap(f);
 }

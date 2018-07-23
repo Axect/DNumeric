@@ -7,37 +7,45 @@ D Numeric Library with R Syntax
 Add next line to your dub.json
 
 ```json
-"dnumeric": "~>0.1.0"
+"dnumeric": "~>0.2.0"
 ```
 
 or dub.sdl
 
 ```sdl
-dependency "dnumeric" version="~>0.1.0"
+dependency "dnumeric" version="~>0.2.0"
 ```
 
 ## Usage
 
 ```d
-// Vector Declaration
-auto a = Vector(1,10) // Vector [1,2,3,4,5,6,7,8,9,10]
-auto b = Vector(1,10,2) // Vector [1,3,5,7,9]
-auto c = Vector([1,2,3,5,8])
+import dnum.tensor;
+import dnum.linalg;
+import dnum.utils;
 
-// Operation with Vector
-b.dot(a) // Inner product
-b + c // Addition (also subtraction)
-b * c // Multiplication (also division)
+// Tensor Declaration
+auto a = Tensor([1,2,3,4]); // Single row tensor
+auto b = Tensor([1,2,3,4], false); // Single column tensor
+auto c = Tensor([[1,2],[3,4]]); // Two Dimensional Tensor
 
-// Matrix Declartion
-auto m = Matrix([1,2,3,4], 2, 2) // Matrix [[1,3],[2,4]]
-auto n = Matrix([1,2,3,4], 2, 2, false) // Matrix [[1,2],[3,4]]
-auto o = Matrix([[1,2],[3,4]])
-auto p = Matrix(Vector([1,2,3,4]), 2, 2, false)
+a.transpose.writeln; // (== b)
+c.transpose.writeln; // (== Tensor([[1,3],[2,4]]))
+
+// Operation
+-b.writeln; // Negation
+(b + b).writeln; // Addition
+(b - b).writeln; // Subtraction
+(b * b).writeln; // Multiplication (component-wise)
+(b / b).writeln; // Division
+(b % b).writeln; // Matrix multiplication
+
+// Linear Algebra
+b.det.writeln; // Determinant (Using LU Decomposition)
+b.inv.writeln; // Inverse (Using LU Decomposition)
+b.lu[0].writeln; // LU Decomposition - L
+b.lu[1].writeln; // LU Decomposition - U
 
 // Utils
-m.det // Determinant
-auto res = m.lu // lu decomposition
-res[0] // l matrix
-res[1] // u matrix
+cbind(b, b).writeln; // Tensor([[1,2,1,2],[3,4,3,4]])
+rbind(b, b).writeln; // Tensor([[1,2],[3,4],[1,2],[3,4]])
 ```
