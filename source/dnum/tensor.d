@@ -195,7 +195,7 @@ struct Tensor {
                 foreach(i, ref rows; temp.data) {
                     pure auto memrow = this.data[i][];
                     foreach(j, ref elem; rows) {
-                        elem = memrow[j] - lhs;
+                        elem = lhs - memrow[j];
                     }
                 }
                 break;
@@ -211,7 +211,7 @@ struct Tensor {
                 foreach(i, ref rows; temp.data) {
                     pure auto memrow = this.data[i][];
                     foreach(j, ref elem; rows) {
-                        elem = memrow[j] / lhs;
+                        elem = lhs / memrow[j];
                     }
                 }
                 break;
