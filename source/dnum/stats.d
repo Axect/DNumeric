@@ -42,7 +42,7 @@ Tensor cmean(Tensor t) {
     foreach(rows; t.data) {
         temp = temp + Tensor(rows);
     }
-    return temp;
+    return temp / t.nrow;
 }
 
 /++
@@ -59,7 +59,7 @@ Tensor rmean(Tensor t) {
         }
         row[0] = s;
     }
-    return temp;
+    return temp / t.ncol;
 }
 
 // =============================================================================
