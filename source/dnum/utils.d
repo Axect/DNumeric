@@ -3,7 +3,7 @@ module dnum.utils;
 import dnum.tensor;
 
 /++
-    Column Bind (Like R Syntax)
+  Column Bind (Like R Syntax)
 +/
 Tensor cbind(Tensor t1, Tensor t2) {
   auto container = Tensor(t1.nrow, t1.ncol + t2.ncol);
