@@ -28,6 +28,20 @@ Tensor col(Tensor t, ulong i) {
 }
 
 /++
+  Check Single Column
++/
+pure bool isCol(Tensor t) {
+  return t.ncol == 1;
+}
+
+/++
+  Check Single Row
++/
+pure bool isRow(Tensor t) {
+  return t.nrow == 1;
+}
+
+/++
   Column Bind (Like R Syntax)
 +/
 Tensor cbind(Tensor t1, Tensor t2) {

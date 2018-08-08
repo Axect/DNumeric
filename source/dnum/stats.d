@@ -2,6 +2,7 @@ module dnum.stats;
 
 import dnum.tensor;
 import dnum.utils;
+import std.math : sqrt;
 
 // =============================================================================
 // Basic Statistics
@@ -39,7 +40,7 @@ pure double mean(Tensor t) {
 +/
 pure double cov(Tensor t1, Tensor t2) {
   // Column Vector
-  if (t1.ncol == 1 && t2.ncol == 1) {
+  if (t1.isCol && t2.isCol) {
     assert(t1.nrow == t2.nrow, "Can compare only same length tensor");
     
     auto l = t1.nrow;
@@ -53,7 +54,7 @@ pure double cov(Tensor t1, Tensor t2) {
       c += t1[i, 0] * t2[i, 0];
     }
     return (c / l - (mx * my) / l^^2) * l / (l - 1);
-  } else if (t1.nrow == 1 && t2.nrow == 1) {
+  } else if (t1.isRow && t2.isRow) {
     assert(t1.ncol == t2.ncol, "Can compare only same length tensor");
 
     auto l = t1.ncol;
@@ -100,6 +101,57 @@ Tensor cov(Tensor t, bool byRow=false) {
   }
 }
 
+/++
+  Variance
++/
+double var(Tensor t) {
+  return cov(t, t);
+}
+
+/++
+  Standard Deviation
++/
+double std(Tensor t) {
+  return t.var.sqrt;
+}
+
+/++
+  Correlation
++/
+double cor(Tensor t1, Tensor t2) {
+  return cov(t1, t2) / (t1.std * t2.std);
+}
+
+/++
+  Generic Correlation
++/
+Tensor cor(Tensor t, bool byRow=false) {
+  if (!byRow) {
+    auto cols = t.ncol;
+    auto container = Tensor(cols,cols);
+
+    foreach (i; 0 .. cols) {
+      foreach (j; 0 .. cols) {
+        container[i,j] = cor(t.col(i), t.col(j));
+      }
+    }
+    return container;
+  } else {
+    auto rows = t.nrow;
+    auto container = Tensor(rows, rows);
+
+    foreach (i; 0 .. rows) {
+      foreach (j; 0 .. rows) {
+        container[i, j] = cor(t.row(i), t.row(j));
+      }
+    }
+    return container;
+  }
+}
+
+// =============================================================================
+// Column or Row Statistics
+// =============================================================================
 
 /++
     Column Mean
