@@ -3,6 +3,31 @@ module dnum.utils;
 import dnum.tensor;
 
 /++
+  Extract Row
++/
+Tensor row(Tensor t, ulong i) {
+  assert(i <= t.nrow, "No valid row");
+
+  auto container = Tensor(t.data[i][], true);
+  return container;
+}
+
+
+/++
+  Extract Column
++/
+Tensor col(Tensor t, ulong i) {
+  assert(i <= t.ncol, "No valid column");
+  
+  auto container = Tensor(t.nrow, 1);
+
+  foreach (j, ref rows; t.data) {
+    container[j,0] = rows[i];
+  }
+  return container;
+}
+
+/++
   Column Bind (Like R Syntax)
 +/
 Tensor cbind(Tensor t1, Tensor t2) {

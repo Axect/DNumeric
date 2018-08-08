@@ -1,6 +1,7 @@
 module dnum.stats;
 
 import dnum.tensor;
+import dnum.utils;
 
 // =============================================================================
 // Basic Statistics
@@ -32,6 +33,73 @@ pure double mean(Tensor t) {
   }
   return s / l;
 }
+
+/++
+  Covariance (Only Single Vector)
++/
+pure double cov(Tensor t1, Tensor t2) {
+  // Column Vector
+  if (t1.ncol == 1 && t2.ncol == 1) {
+    assert(t1.nrow == t2.nrow, "Can compare only same length tensor");
+    
+    auto l = t1.nrow;
+    double mx = 0;
+    double my = 0;
+    double c = 0;
+
+    foreach (i; 0 .. t1.nrow) {
+      mx += t1[i,0];
+      my += t2[i,0];
+      c += t1[i, 0] * t2[i, 0];
+    }
+    return (c / l - (mx * my) / l^^2) * l / (l - 1);
+  } else if (t1.nrow == 1 && t2.nrow == 1) {
+    assert(t1.ncol == t2.ncol, "Can compare only same length tensor");
+
+    auto l = t1.ncol;
+    double mx = 0;
+    double my = 0;
+    double c = 0;
+
+    foreach (i; 0 .. t1.ncol) {
+      mx += t1[0,i];
+      my += t2[0,i];
+      c += t1[0,i] * t2[0,i];
+    }
+    return (c / l - (mx * my) / l^^2) * l / (l - 1);
+  } else {
+    assert(false, "Can't compare matrices or different dimension vectors directly");
+  }
+}
+
+/++
+  Covariance Tensor
++/
+Tensor cov(Tensor t, bool byRow=false) {
+  // Default : Consider columns as data sets
+  if (!byRow) {
+    auto cols = t.ncol;
+    auto ten = Tensor(cols, cols);
+
+    foreach (i; 0 .. cols) {
+      foreach (j; 0 .. cols) {
+        ten[i, j] = cov(t.col(i), t.col(j));
+      }
+    }
+    return ten;
+  } else {
+    auto rows = t.nrow;
+    auto ten = Tensor(rows, rows);
+
+    foreach (i; 0 .. rows) {
+      foreach (j; 0 .. rows) {
+        ten[i,j] = cov(t.row(i), t.row(j));
+      }
+    }
+    return ten;
+  }
+}
+
 
 /++
     Column Mean

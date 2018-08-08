@@ -319,5 +319,4 @@ struct Tensor {
     }
     return temp;
   }
-
 }
