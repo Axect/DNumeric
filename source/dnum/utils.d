@@ -141,9 +141,9 @@ Tensor rand(int m, int n) {
 
   auto container = Tensor(m, n);
 
-  foreach(rows; container.data) {
-    foreach(elem; rows) {
-      elem = uniform!"()"(0, 1, rnd);
+  foreach(ref rows; container.data) {
+    foreach(ref elem; rows) {
+      elem = uniform!"()"(0., 1., rnd);
     }
   }
 
