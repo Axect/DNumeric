@@ -305,8 +305,8 @@ struct Tensor {
   // Operators (Utils)
   // =========================================================================
   /++
-        Function apply whole tensor
-    +/
+    Function apply whole tensor
+  +/
   Tensor fmap(double delegate(double) f) {
     Tensor temp = Tensor(this.nrow, this.ncol);
     foreach (i, ref rows; temp.data) {
