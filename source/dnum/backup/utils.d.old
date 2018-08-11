@@ -8,7 +8,7 @@ import dnum.tensor;
 Tensor row(Tensor t, ulong i) {
   assert(i <= t.nrow, "No valid row");
 
-  auto container = Tensor(t.data[i][], Shape.Row);
+  auto container = Tensor(t.data[i][], true);
   return container;
 }
 
