@@ -319,8 +319,8 @@ struct Tensor {
   }
 
   /++
-        Transpose
-    +/
+    Transpose
+  +/
   Tensor transpose() {
     Tensor temp = Tensor(this.ncol, this.nrow);
     foreach (i, ref rows; temp.data) {
@@ -329,5 +329,12 @@ struct Tensor {
       }
     }
     return temp;
+  }
+
+  /++
+    Alias for Transpose
+  +/
+  Tensor t() {
+    return this.transpose;
   }
 }
