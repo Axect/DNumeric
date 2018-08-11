@@ -99,3 +99,53 @@ Tensor rbind(Tensor[] t...) {
 auto vectorize(double delegate(double) f) {
   return (Tensor t) => t.fmap(f);
 }
+
+// =============================================================================
+// R Functions
+// =============================================================================
+/++
+    runif - generate uniform random seq
++/
+Tensor runif(int n, double a, double b, Shape byRow = Shape.Row) {
+  import std.random : Random, unpredictableSeed, uniform;
+
+  auto rnd = Random(unpredictableSeed);
+
+  double[] w;
+  w.length = n;
+
+  foreach (i; 0 .. n) {
+    w[i] = uniform!"()"(a, b, rnd);
+  }
+
+  return Tensor(w, byRow);
+}
+
+// =============================================================================
+// MATLAB(Julia) Functions
+// =============================================================================
+/++
+  rand - random tensor with uniform dist (0, 1)
++/
+Tensor rand(int n, Shape byRow = Shape.Row) {
+  return runif(n, 0, 1, byRow);
+}
+
+/++
+  rand tensor version
++/
+Tensor rand(int m, int n) {
+  import std.random : Random, unpredictableSeed, uniform;
+
+  auto rnd = Random(unpredictableSeed);
+
+  auto container = Tensor(m, n);
+
+  foreach(rows; container.data) {
+    foreach(elem; rows) {
+      elem = uniform!"()"(0, 1, rnd);
+    }
+  }
+
+  return container;
+}

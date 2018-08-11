@@ -183,24 +183,3 @@ Tensor rmean(Tensor t) {
   }
   return temp / t.ncol;
 }
-
-// =============================================================================
-// R Functions
-// =============================================================================
-/++
-    runif - generate uniform random seq
-+/
-Tensor runif(int n, double a, double b, Shape byRow = Shape.Row) {
-  import std.random : Random, unpredictableSeed, uniform;
-
-  auto rnd = Random(unpredictableSeed);
-
-  double[] w;
-  w.length = n;
-
-  foreach (i; 0 .. n) {
-    w[i] = uniform!"()"(a, b, rnd);
-  }
-
-  return Tensor(w, byRow);
-}
