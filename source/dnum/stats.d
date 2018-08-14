@@ -21,6 +21,19 @@ pure double sum(Tensor t) {
 }
 
 /++
+  Parallel Sum - Effective to many row vector
++/
+double psum(Tensor t) {
+  import std.parallelism : taskPool;
+
+  double s = 0;
+  foreach (rows; t.data) {
+    s += taskPool.reduce!"a + b"(rows);
+  }
+  return s;
+}
+
+/++
     Mean (Whole)
 +/
 pure double mean(Tensor t) {

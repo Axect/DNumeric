@@ -322,12 +322,12 @@ struct Tensor {
     Function apply whole tensor - parallel ver.
   +/
   Tensor pmap(double delegate(double) f) {
-    import std.parallelism : taskPool, parallel;
+    import std.parallelism : taskPool;
 
     Tensor temp = Tensor(this.nrow, this.ncol);
-    foreach (i, ref rows; taskPool.parallel(temp.data)) {
+    foreach (i, ref rows; temp.data) {
       pure auto memrow1 = this.data[i][];
-      foreach (j, ref elem; rows) {
+      foreach (j, ref elem; taskPool.parallel(rows)) {
         elem = f(memrow1[j]);
       }
     }
