@@ -319,17 +319,29 @@ struct Tensor {
   }
 
   /++
-    Function apply whole tensor - parallel ver.
+    Function apply whole tensor - parallel - choose row or column which contain many components
   +/
-  Tensor pmap(double delegate(double) f) {
+  Tensor pmap(double delegate(double) f, Shape byRow = Shape.Col) {
     import std.parallelism : taskPool;
-
     Tensor temp = Tensor(this.nrow, this.ncol);
-    foreach (i, ref rows; temp.data) {
-      pure auto memrow1 = this.data[i][];
-      foreach (j, ref elem; taskPool.parallel(rows)) {
-        elem = f(memrow1[j]);
-      }
+
+    switch (byRow) with (Shape) {
+      case Row:
+        foreach (i, ref rows; taskPool.parallel(temp.data)) {
+          pure auto memrow1 = this.data[i][];
+          foreach (j, ref elem; rows) {
+            elem = f(memrow1[j]);
+          }
+        }
+        break;
+      default:
+        foreach (i, ref rows; temp.data) {
+          pure auto memrow1 = this.data[i][];
+          foreach (j, ref elem; taskPool.parallel(rows)) {
+            elem = f(memrow1[j]);
+          }
+        }
+        break;
     }
     return temp;
   }
