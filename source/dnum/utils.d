@@ -41,6 +41,16 @@ pure bool isRow(Tensor t) {
   return t.nrow == 1;
 }
 
+// =============================================================================
+// Python Functions
+// =============================================================================
+/++
+  where - Like numpy.where
++/
+
+// =============================================================================
+// R Functions
+// =============================================================================
 /++
   Column Bind (Like R Syntax)
 +/
@@ -100,9 +110,6 @@ auto vectorize(double delegate(double) f) {
   return (Tensor t) => t.fmap(f);
 }
 
-// =============================================================================
-// R Functions
-// =============================================================================
 /++
     runif - generate uniform random seq
 +/
@@ -121,6 +128,24 @@ Tensor runif(int n, double a, double b, Shape byRow = Shape.Row) {
   return Tensor(w, byRow);
 }
 
+/++
+  runif - D version
++/
+Tensor runif(int n, Range r, Shape byRow = Shape.Row) {
+  import std.random : Random, unpredictableSeed, uniform;
+
+  auto rnd = Random(unpredictableSeed);
+
+  double[] w;
+  w.length = n;
+
+  foreach (i; 0 .. n) {
+    w[i] = uniform!"()"(r.start, r.end, rnd);
+  }
+
+  return Tensor(w, byRow);
+}
+
 // =============================================================================
 // MATLAB(Julia) Functions
 // =============================================================================
@@ -129,6 +154,13 @@ Tensor runif(int n, double a, double b, Shape byRow = Shape.Row) {
 +/
 Tensor rand(int n, Shape byRow = Shape.Row) {
   return runif(n, 0, 1, byRow);
+}
+
+/++
+  rand - D version
++/
+Tensor rand(int n, Range r, Shape byRow = Shape.Row) {
+  return runif(n, r, byRow);
 }
 
 /++
@@ -144,6 +176,25 @@ Tensor rand(int m, int n) {
   foreach(ref rows; container.data) {
     foreach(ref elem; rows) {
       elem = uniform!"()"(0., 1., rnd);
+    }
+  }
+
+  return container;
+}
+
+/++
+  rand tensor version - D version
++/
+Tensor rand(Size s, Range r) {
+  import std.random : Random, unpredictableSeed, uniform;
+
+  auto rnd = Random(unpredictableSeed);
+
+  auto container = Tensor(s.row, s.col);
+
+  foreach(ref rows; container.data) {
+    foreach(ref elem; rows) {
+      elem = uniform!"()"(r.start, r.end, rnd);
     }
   }
 

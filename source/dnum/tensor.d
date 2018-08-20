@@ -1,13 +1,45 @@
 module dnum.tensor;
 
+// =============================================================================
+// Enum Section
+// =============================================================================
 /++
-  Shape Enum
+  Shape Enum - Row or Col
 +/
 enum Shape {
   Row,
   Col
 }
 
+/++
+  Range Struct - start, end
++/
+struct Range {
+  double start;
+  double end;
+
+  this(double x, double y) {
+    this.start = x;
+    this.end = y;
+  }
+}
+
+/++
+  Size Struct - row, col
++/
+struct Size {
+  int row;
+  int col;
+
+  this(int x, int y) {
+    this.row = x;
+    this.col = y;
+  }
+}
+
+// =============================================================================
+// Main Section
+// =============================================================================
 /++
   Tensor - Lightweight Numerical Structrue
 +/
@@ -114,7 +146,7 @@ struct Tensor {
   }
   
   /++
-    Slice
+    opIndex with Slice
   +/
   Tensor opIndex(long[2] ij, long[2] kl) {
     auto idiff = ij[1] - ij[0];
@@ -129,7 +161,7 @@ struct Tensor {
   }
   
   /++
-    Slice
+    opSlice
   +/
   long[2] opSlice(size_t dim)(long start, long end) {
     return [start, end];

@@ -8,7 +8,7 @@ import std.math : sqrt;
 // Basic Statistics
 // =============================================================================
 /++
-    Summation
+  Summation
 +/
 pure double sum(Tensor t) {
   double s = 0;
@@ -34,7 +34,7 @@ double psum(Tensor t) {
 }
 
 /++
-    Mean (Whole)
+  Mean (Whole)
 +/
 pure double mean(Tensor t) {
   double s = 0;
@@ -169,7 +169,7 @@ Tensor cor(Tensor t, Shape byRow = Shape.Col) {
 // =============================================================================
 
 /++
-    Column Mean
+  Column Mean
 +/
 Tensor cmean(Tensor t) {
   auto temp = Tensor(0, 1, t.ncol);
@@ -181,7 +181,7 @@ Tensor cmean(Tensor t) {
 }
 
 /++
-    Row Mean
+  Row Mean
 +/
 Tensor rmean(Tensor t) {
   auto temp = Tensor(t.nrow, 1);
