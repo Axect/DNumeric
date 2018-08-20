@@ -112,6 +112,28 @@ struct Tensor {
   void opIndexAssign(double value, size_t i, size_t j) {
     this.data[i][j] = value;
   }
+  
+  /++
+    Slice
+  +/
+  Tensor opIndex(long[2] ij, long[2] kl) {
+    auto idiff = ij[1] - ij[0];
+    auto jdiff = kl[1] - kl[0];
+    auto result = Tensor(idiff, jdiff);
+    foreach (i; 0 .. idiff) {
+      foreach (j; 0 .. jdiff) {
+        result[i, j] = this.data[ij[0] + i][kl[0] + j];
+      }
+    }
+    return result;
+  }
+  
+  /++
+    Slice
+  +/
+  long[2] opSlice(size_t dim)(long start, long end) {
+    return [start, end];
+  }
 
   /++
     Unary Operator
