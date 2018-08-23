@@ -17,10 +17,21 @@ enum Shape {
 struct Range {
   double start;
   double end;
+  double step = 1;
 
   this(double x, double y) {
     this.start = x;
     this.end = y;
+  }
+
+  this(double x, double y, double step) {
+    this.start = x;
+    this.end = y;
+    this.step = step;
+  }
+
+  Tensor toTensor(Shape byRow = Shape.Row) {
+    return Tensor(this, byRow);
   }
 }
 
@@ -115,6 +126,34 @@ struct Tensor {
   }
 
   /++
+    Range to Tensor
+  +/
+  this(Range r, Shape byRow = Shape.Row) {
+    auto factor = (r.end - r.start) / r.step;
+    auto l = cast(int)(factor + 1);
+    double[] vec;
+    vec.length = l;
+
+    foreach (i; 0 .. l) {
+      vec[i] = r.start + i * r.step;
+    }
+
+    switch (byRow) with (Shape) {
+      case Row:
+        this.data.length = 1;
+        this.data[0] = vec[]; // Copy
+        break;
+      default:
+        this.data.length = l;
+        foreach (i, ref rows; this.data) {
+          rows.length = 1;
+          rows[0] = vec[i];
+        }
+        break;
+    }
+  }
+
+  /++
     Return row (Same as R)
   +/
   pure auto nrow() {
@@ -144,7 +183,7 @@ struct Tensor {
   void opIndexAssign(double value, size_t i, size_t j) {
     this.data[i][j] = value;
   }
-  
+
   /++
     opIndex with Slice
   +/
@@ -159,7 +198,7 @@ struct Tensor {
     }
     return result;
   }
-  
+
   /++
     opSlice
   +/

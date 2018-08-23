@@ -167,6 +167,34 @@ Tensor cor(Tensor t, Shape byRow = Shape.Col) {
 // =============================================================================
 // Column or Row Statistics
 // =============================================================================
+/++
+  Column Sum
++/
+Tensor csum(Tensor t) {
+  auto temp = Tensor(0, 1, t.ncol);
+
+  foreach (rows; t.data) {
+    temp = temp + Tensor(rows);
+  }
+  return temp;
+}
+
+/++
+  Row Sum
++/
+Tensor rsum(Tensor t) {
+  auto temp = Tensor(t.nrow, 1);
+
+  foreach (i, ref row; temp.data) {
+    double s = 0;
+    auto memrow = t.data[i][];
+    foreach (k; 0 .. t.ncol) {
+      s += memrow[k];
+    }
+    row[0] = s;
+  }
+  return temp;
+}
 
 /++
   Column Mean
@@ -195,4 +223,29 @@ Tensor rmean(Tensor t) {
     row[0] = s;
   }
   return temp / t.ncol;
+}
+
+// =============================================================================
+// Statistical Learning
+// =============================================================================
+/++
+  Simple Linear Regression
++/
+struct Linear {
+  double slope;
+  double intercept;
+
+  this(Tensor X, Tensor Y) {
+    assert(X.nrow == Y.nrow);
+
+    double n = cast(double)X.nrow;
+
+    this.slope = (n * sum(X * Y) - sum(X) * sum(Y)) / (n*sum(X^^2) - sum(X)^^2);
+    this.intercept = 1/n * (sum(Y) - this.slope * sum(X));
+  }
+
+  Tensor opCall(Tensor x) {
+    assert(x.isCol || x.isRow);
+    return slope * x + intercept;
+  }
 }
