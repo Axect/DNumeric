@@ -3,6 +3,14 @@ module dnum.utils;
 import dnum.tensor;
 
 /++
+  Create Single Tensor
++/
+Tensor seq(int start, int end, int step = 1) {
+  auto r = Range(start, end, step);
+  return Tensor(r);
+}
+
+/++
   Extract Row
 +/
 Tensor row(Tensor t, ulong i) {
@@ -11,7 +19,6 @@ Tensor row(Tensor t, ulong i) {
   auto container = Tensor(t.data[i][], Shape.Row);
   return container;
 }
-
 
 /++
   Extract Column
@@ -39,6 +46,13 @@ pure bool isCol(Tensor t) {
 +/
 pure bool isRow(Tensor t) {
   return t.nrow == 1;
+}
+
+/++
+  Check Single
++/
+pure bool isSingle(Tensor t) {
+  return isCol(t) || isRow(t);
 }
 
 // =============================================================================
@@ -86,7 +100,7 @@ Tensor cbind(Tensor[] t...) {
 }
 
 /++
-    Row Bind (Like R Syntax)
+  Row Bind (Like R Syntax)
 +/
 Tensor rbind(Tensor t1, Tensor t2) {
   return Tensor(t1.data ~ t2.data);
@@ -111,7 +125,7 @@ auto vectorize(double delegate(double) f) {
 }
 
 /++
-    runif - generate uniform random seq
+  runif - generate uniform random seq
 +/
 Tensor runif(int n, double a, double b, Shape byRow = Shape.Row) {
   import std.random : Random, unpredictableSeed, uniform;
@@ -199,4 +213,78 @@ Tensor rand(Size s, Range r) {
   }
 
   return container;
+}
+
+// =============================================================================
+// Functional Programming Tools - Unstable
+// =============================================================================
+/++
+  take - take the number of components of tensor
++/
+Tensor take(Tensor t, int n) {
+  assert(t.isSingle, "Use Range to extract components for not single tensors (see tensor.d - opIndex)");
+  if (t.isRow) {
+    return t[Range(0,0), Range(0, n-1)];
+  } else {
+    return t[Range(0, n-1), Range(0,0)];
+  }
+}
+
+/++
+  takeWhile
++/
+Tensor takeWhile(Tensor t, bool delegate(double) f) {
+  assert(t.isSingle, "You can't use take while for not single tensors");
+  if (t.isRow) {
+    int n = 0;
+    double[] container;
+    while (f(t[0, n])) {
+      container ~= t[0,n];
+      n++;
+    }
+    return Tensor(container, Shape.Row);
+  } else {
+    int n = 0;
+    double[] container;
+    while (f(t[n,0])) {
+      container ~= t[n,0];
+      n++; 
+    }
+    return Tensor(container, Shape.Col);
+  }
+}
+
+alias DFunc = double delegate(double, double);
+alias Func = double delegate(double);
+
+/++
+  Currying
++/
+Func currying(DFunc f, double x) {
+  return t => f(x,t);
+}
+
+/++
+  zipWith - zip two Tensor with operation to one tensor
++/
+Tensor zipWith(double delegate(double, double) op, Tensor t1, Tensor t2) {
+  assert(t1.isSingle && t2.isSingle, "zipWith for not single tensor is not yet implemented");
+  import std.algorithm.comparison : min;
+  if (t1.isCol && t2.isCol) {
+    auto n = min(t1.nrow, t2.nrow);
+    auto result = Tensor(n, 1);
+    foreach(i; 0 .. n) {
+      result[i, 0] = op(t1[i,0], t2[i,0]);
+    }
+    return result;
+  } else if (t1.isRow && t2.isRow) {
+    auto n = min(t1.ncol, t2.ncol);
+    auto result = Tensor(1, n);
+    foreach(i; 0 .. n) {
+      result[0, i] = op(t1[0,i], t2[0,i]);
+    }
+    return result;
+  } else {
+    assert(false, "Both tensors should be same form! (Row vs Row or Col vs Col)");
+  }
 }
