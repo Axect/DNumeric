@@ -3,33 +3,21 @@ module dnum.matrix;
 import std.algorithm.comparison : min, max;
 import std.conv : to;
 
-/++
-    Lightweight R-like Matrix structire
-+/
+/// Light-weight R-like matrix structure
 struct Matrix {
-    /++
-        Data container
-    +/
+    /// Data container
     double[] data;
 
-    /++
-        Row
-    +/
+    /// Row
     ulong row;
 
-    /++
-        Column
-    +/
+    /// Column
     ulong col;
 
-    /++
-        Shape
-    +/
+    /// Shape
     bool by_row;
 
-    /++
-        Default Constructor
-    +/
+    /// Default Constructor
     this(double[] vec, ulong row, ulong col, bool by_row) {
         this.data = vec;
         this.row = row;
@@ -37,9 +25,7 @@ struct Matrix {
         this.by_row = by_row;
     }
 
-    /++
-        Initialize with single number
-    +/
+    /// Initialize with single number
     this(double val, ulong row, ulong col, bool by_row) {
         this.data.length = row * col;
         this.row = row;
@@ -50,12 +36,13 @@ struct Matrix {
         }
     }
 
-    void toString(scope void delegate(const(char)[]) sink) const {
+    void toString(scope void delegate(const(char)[]) sink) const { // @suppress(dscanner.suspicious.unused_parameter)
         import std.stdio : write;
 
         this.spread.write;
     }
-
+    
+    /// Change shape
     Matrix change_shape() {
         assert((this.row * this.col) == this.data.length);
         auto r = this.row;
@@ -82,14 +69,15 @@ struct Matrix {
         }
     }
 
-    const string spread() {
+    /// Spread 1D to 2D
+    string spread() const {
         import std.format : format;
 
         assert(this.row * this.col == this.data.length);
         ulong space = 5;
         foreach(i; 0 .. this.row * this.col) {
             auto temp = this.data[i];
-            ulong m = min(to!string(temp).length, format!"%.4f"(temp).length) + 1;
+            const ulong m = min(to!string(temp).length, format!"%.4f"(temp).length) + 1;
             if (m > space) {
                 space = m;
             }
@@ -122,9 +110,7 @@ struct Matrix {
     // =========================================================================
     // Operator Overloading
     // =========================================================================
-    /++
-        Getter
-    +/
+    /// Getter
     pure double opIndex(ulong i, ulong j) const {
         switch(this.by_row) {
             case true:
@@ -136,9 +122,7 @@ struct Matrix {
         }
     }
 
-    /++
-        Setter
-    +/
+    /// Setter
     void opIndexAssign(double value, ulong i, ulong j) {
         switch(this.by_row) {
             case true:
@@ -152,9 +136,7 @@ struct Matrix {
         }
     }
 
-    /++
-        Unary Ops
-    +/
+    /// Unary ops - negative
     Matrix opUnary(string op)() {
         double[] vec;
         vec.length = this.row * this.col;
@@ -172,9 +154,7 @@ struct Matrix {
         return Matrix(vec, this.row, this.col, this.by_row);
     }
 
-    /++
-        Binary Ops with scalar
-    +/
+    /// Binary ops with single number
     Matrix opBinary(string op)(double rhs) {
         double[] vec;
         vec.length = this.row * this.col;
@@ -211,9 +191,7 @@ struct Matrix {
         return Matrix(vec, this.row, this.col, this.by_row);
     }
 
-    /++
-        Binary Ops (Right) with scalar
-    +/
+    /// Binary ops with single number - right hand side
     Matrix opBinaryRight(string op)(double lhs) {
         double[] vec;
         vec.length = this.row * this.col;
@@ -249,9 +227,7 @@ struct Matrix {
         }
     }
 
-    /++
-        Binary Ops with Matrix
-    +/
+    /// Binary ops with matrix
     Matrix opBinary(string op)(Matrix rhs) {
         double[] vec;
         vec.length = this.row * this.col;
@@ -296,11 +272,47 @@ struct Matrix {
                 throw new Exception("No operation!");
         }
     }
+
+    // =========================================================================
+    // Basic row & col ops
+    // =========================================================================
+    /// Transpose
+    Matrix transpose() {
+        switch (this.by_row) {
+            case(true):
+                return Matrix(this.data, this.col, this.row, false);
+            default:
+                return Matrix(this.data, this.col, this.row, true);
+        }
+    }
+
+    /// Extract column
+    double[] cols(ulong idx) {
+        assert(idx < this.col);
+        double[] container;
+
+        switch (this.by_row) {
+            case(true):
+                const ulong l = this.row * this.col;
+                foreach(i; 0 .. l) {
+                    if (i % this.col == idx) {
+                        container ~= this.data[i];
+                    }
+                }
+                break;
+            default:
+                const ulong s = this.row * idx;
+                container = this.data[s .. s + this.row];
+                break;
+        }
+        return container;
+    }
 }
 
 // =============================================================================
 // Back-end utils
 // =============================================================================
+/// Flexible tab
 string tab(string s, ulong space) {
     import std.array: replicate;
     const ulong l = s.length;
