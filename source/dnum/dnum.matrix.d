@@ -286,7 +286,7 @@ struct Matrix {
         }
     }
 
-    /// Extract column
+    /// Extract column - TODO: slice op
     double[] cols(ulong idx) {
         assert(idx < this.col);
         double[] container;
@@ -303,6 +303,28 @@ struct Matrix {
             default:
                 const ulong s = this.row * idx;
                 container = this.data[s .. s + this.row];
+                break;
+        }
+        return container;
+    }
+
+    /// Extract rows - TODO: slice op
+    double[] rows(ulong idx) {
+        assert(idx < this.row);
+        double[] container;
+
+        switch (this.by_row) {
+            case(true):
+                const ulong s = this.col * idx;
+                container = this.data[s .. s + this.row];
+                break;
+            default:
+                const ulong l = this.row * this.col;
+                foreach(i; 0 .. l) {
+                    if (i % this.row == idx) {
+                        container ~= this.data[i];
+                    }
+                }
                 break;
         }
         return container;
