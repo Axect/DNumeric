@@ -331,6 +331,11 @@ struct Matrix {
     }
 }
 
+/// R-like matrix wrapper
+Matrix matrix(double[] vec, ulong row, ulong col, bool by_row) {
+    return Matrix(vec, row, col, by_row);
+}
+
 // =============================================================================
 // Back-end utils
 // =============================================================================
